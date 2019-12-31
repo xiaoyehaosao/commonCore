@@ -1,6 +1,7 @@
 package com.xyhs.common.tools;
 
 
+import com.xyhs.common.enumcode.ResultCode;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -35,6 +36,9 @@ public class ExecuteResult<T> implements Serializable {
      * 错误信息
      */
     private String errorMessage ;
+
+
+    private int code;
 
     /**
      * 存入错误信息
@@ -122,5 +126,42 @@ public class ExecuteResult<T> implements Serializable {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    private static <T> ExecuteResult<T> initExecuteResult(T data, int code, String errorMessage,List<String> errorMessages,String resultMessage) {
+        ExecuteResult<T> executeResult = new ExecuteResult<>();
+        executeResult.setCode(code);
+        executeResult.setResult(data);
+        executeResult.setErrorMessage(errorMessage);
+        executeResult.setErrorMessages(errorMessages);
+        executeResult.setResultMessage(resultMessage);
+        return executeResult;
+    }
+
+    public static <T>ExecuteResult<T> ok(T data){
+       return initExecuteResult(data,ResultCode.SUCCESS.getCode(),null,null,ResultCode.SUCCESS.getMessage());
+    }
+
+    public static <T>ExecuteResult<T> ok(T data,int code,String resultMessage){
+        return initExecuteResult(data,code,null,null,resultMessage);
+    }
+
+    public static <T>ExecuteResult<T> faield(int code,String errorMessage){
+        return initExecuteResult(null,code,errorMessage, null,null);
+    }
+    public static <T>ExecuteResult<T> faield(){
+        return initExecuteResult(null,ResultCode.INTERNAL_SERVER_ERROR.getCode(), ResultCode.INTERNAL_SERVER_ERROR.getMessage(),null,null);
+    }
+
+    public static <T>ExecuteResult<T> faield(int code,List<String> errorMessages){
+        return initExecuteResult(null,code,null,errorMessages,null);
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }
